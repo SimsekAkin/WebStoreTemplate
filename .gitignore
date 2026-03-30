@@ -1,0 +1,6 @@
+[Bb]in/
+[Oo]bj/
+*.db
+*.exe
+*.user
+.vs/
