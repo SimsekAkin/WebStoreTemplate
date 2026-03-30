@@ -1,0 +1,83 @@
+﻿@model List<WebStore.Models.Product>
+
+@{
+    ViewData["Title"] = "WebStore";
+    var searchResultTerm = ViewData["SearchTerm"]?.ToString() ?? string.Empty;
+}
+
+<div class="container py-4">
+    @* Show one-time info message (from TempData) after redirects. *@
+    @if (TempData["InfoMessage"] is string infoMessage)
+    {
+        <div class="alert alert-warning" role="alert" data-auto-dismiss="3000">
+            @infoMessage
+        </div>
+    }
+
+    @* Header row: page title + number of products. *@
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Products</h1>
+        <span class="text-muted">@Model.Count item(s)</span>
+    </div>
+
+    @* Simple name search form for homepage products. *@
+    <form asp-controller="Home" asp-action="Index" method="get" class="row g-2 mb-4">
+        <div class="col-12 col-md-8 col-lg-7">
+            <input type="text"
+                   name="searchTerm"
+                   class="form-control"
+                   placeholder="Search by product name..." />
+        </div>
+        <div class="col-12 col-md-3 col-lg-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </form>
+
+    @if (!string.IsNullOrWhiteSpace(searchResultTerm))
+    {
+        <p class="text-muted mb-3">Search results for: <strong>@searchResultTerm</strong></p>
+    }
+
+    @* If there is no product, show a friendly message. *@
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info" role="alert" data-auto-dismiss="3000">
+            @(!string.IsNullOrWhiteSpace(searchResultTerm)
+                ? "No products found for your search."
+                : "No products found. Add products to see them on the homepage.")
+        </div>
+    }
+    else
+    {
+        @* Product cards grid on homepage. *@
+        <div class="row g-4">
+            @foreach (var product in Model)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <a asp-controller="Home"
+                       asp-action="Details"
+                       asp-route-id="@product.Id"
+                       class="text-decoration-none text-reset d-block h-100">
+                        <div class="card h-100 shadow-sm">
+                            @* Show product image if available; otherwise show placeholder text. *@
+                            @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
+                            {
+                                <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height: 220px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <img src="~/image/default.jpg" class="card-img-top" alt="Default product image" style="height: 220px; object-fit: cover;" />
+                            }
+
+                            <div class="card-body d-flex flex-column">
+                                @* On homepage we show only name + price. *@
+                                <h2 class="h5 card-title">@product.Name</h2>
+                                <p class="fw-semibold mb-0">@($"€{product.Price:0.00}")</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>

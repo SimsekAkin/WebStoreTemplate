@@ -1,0 +1,107 @@
+html {
+  font-size: 14px;
+}
+
+:root {
+  --app-bg: #f7f9fc;
+  --app-text: #1f2937;
+  --app-surface: #ffffff;
+  --app-border: #dee2e6;
+  --app-muted: #6c757d;
+}
+
+html[data-theme="dark"] {
+  --app-bg: #0f172a;
+  --app-text: #e5e7eb;
+  --app-surface: #111827;
+  --app-border: #334155;
+  --app-muted: #94a3b8;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  background-color: var(--app-bg);
+  color: var(--app-text);
+}
+
+.card,
+.table,
+.navbar,
+.footer,
+.form-control,
+.form-select,
+.modal-content {
+  background-color: var(--app-surface);
+  color: var(--app-text);
+  border-color: var(--app-border);
+}
+
+.text-muted {
+  color: var(--app-muted) !important;
+}
+
+html[data-theme="dark"] .nav-link,
+html[data-theme="dark"] .navbar-brand,
+html[data-theme="dark"] .footer,
+html[data-theme="dark"] .table,
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6,
+html[data-theme="dark"] p,
+html[data-theme="dark"] label,
+html[data-theme="dark"] span,
+html[data-theme="dark"] dt,
+html[data-theme="dark"] dd,
+html[data-theme="dark"] .btn-link {
+  color: var(--app-text) !important;
+}
+
+/* Keep navbar text same as light mode in dark theme for readability. */
+html[data-theme="dark"] .navbar {
+  background-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .navbar .nav-link,
+html[data-theme="dark"] .navbar .navbar-brand {
+  color: #212529 !important;
+  opacity: 1;
+}
+
+.cart-quantity-badge {
+  background-color: #0d6efd;
+  color: #ffffff !important;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+html[data-theme="dark"] .cart-quantity-badge {
+  background-color: #60a5fa;
+  color: #0b1220 !important;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}

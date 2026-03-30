@@ -1,0 +1,116 @@
+@model List<WebStore.Models.CartItem>
+
+@{
+    // Page title and computed grand total of current cart.
+    ViewData["Title"] = "Cart";
+    var total = Model.Sum(x => x.Price * x.Quantity);
+}
+
+<div class="container py-4">
+    @* Show one-time info message (from TempData) after redirects. *@
+    @if (TempData["InfoMessage"] is string infoMessage)
+    {
+        <div class="alert alert-info" role="alert" data-auto-dismiss="3000">
+            @infoMessage
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Shopping Cart</h1>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Continue Shopping</a>
+    </div>
+
+    @* Show empty-state message when cart has no items. *@
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            Your cart is empty.
+        </div>
+    }
+    else
+    {
+        @* Cart table with image, price, quantity controls, and line totals. *@
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Product</th>
+                            <th class="text-end">Unit Price</th>
+                            <th class="text-end">Quantity</th>
+                            <th class="text-end">Line Total</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @* Render one row per item in the session cart. *@
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.Name" style="width: 52px; height: 52px; object-fit: cover; border-radius: 6px;" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/image/default.jpg" alt="Default product image" style="width: 52px; height: 52px; object-fit: cover; border-radius: 6px;" />
+                                    }
+                                </td>
+                                <td>@item.Name</td>
+                                <td class="text-end">@($"€{item.Price:0.00}")</td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex align-items-center gap-2">
+                                        @* Quantity down. Item is removed when quantity reaches zero. *@
+                                        <form asp-controller="Cart" asp-action="Decrease" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="productId" value="@item.ProductId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">-</button>
+                                        </form>
+
+                                        <span class="badge cart-quantity-badge px-3 py-2">@item.Quantity</span>
+
+                                        @* Quantity up. *@
+                                        <form asp-controller="Cart" asp-action="Increase" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="productId" value="@item.ProductId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">+</button>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td class="text-end">@($"€{(item.Price * item.Quantity):0.00}")</td>
+                                <td class="text-end">
+                                    @* Remove item from cart directly. *@
+                                    <form asp-controller="Cart" asp-action="Remove" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">🗑️</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        @* Grand total summary row. *@
+                        <tr>
+                            <th colspan="4" class="text-end">Grand Total</th>
+                            <th class="text-end">@($"€{total:0.00}")</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        @* Final cart actions. *@
+        <div class="mt-3">
+            <a asp-controller="Cart" asp-action="Checkout" class="btn btn-primary me-2">Checkout</a>
+
+            <form asp-controller="Cart" asp-action="Clear" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Clear all cart items?')">Clear Cart</button>
+            </form>
+        </div>
+    }
+</div>

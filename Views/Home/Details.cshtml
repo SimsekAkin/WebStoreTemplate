@@ -1,0 +1,53 @@
+@model WebStore.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="container py-4">
+    @* Quick link to go back to product list/homepage. *@
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link px-0 mb-3">&larr; Back to Products</a>
+
+    @* Main product details card. *@
+    <div class="card shadow-sm">
+        <div class="row g-0">
+            <div class="col-12 col-md-5">
+                @* Show image when available; otherwise show a simple placeholder. *@
+                @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded-start w-100" style="height: 100%; object-fit: cover;" />
+                }
+                else
+                {
+                    <img src="~/image/default.jpg" alt="Default product image" class="img-fluid rounded-start w-100" style="height: 100%; object-fit: cover; min-height: 280px;" />
+                }
+            </div>
+            <div class="col-12 col-md-7">
+                <div class="card-body p-4">
+                    @* Basic product info visible at the top. *@
+                    <h1 class="h3">@Model.Name</h1>
+                    <p class="h4 text-primary mb-3">@($"€{Model.Price:0.00}")</p>
+
+                    @* Detail list for remaining fields. *@
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Stock</dt>
+                        <dd class="col-sm-8">@Model.Stock</dd>
+
+                        <dt class="col-sm-4">Description</dt>
+                        <dd class="col-sm-8">
+                            @* Show fallback text when description is empty. *@
+                            @(string.IsNullOrWhiteSpace(Model.Description) ? "No description." : Model.Description)
+                        </dd>
+                    </dl>
+
+                    <form asp-controller="Cart" asp-action="Add" method="post" class="mt-4">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <input type="hidden" name="quantity" value="1" />
+                        <button type="submit" class="btn btn-primary" title="Add to Cart">🛒</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
